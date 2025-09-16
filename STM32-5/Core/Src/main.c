@@ -49,7 +49,7 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-
+void display7SEG(int num, uint32_t GPIO_Pin);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -86,34 +86,30 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  void display7SEG(int num,  uint32_t GPIO_Pin) {
-	  char ledNum[10] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90};
-	  for (int i = 0; i < 7; i++) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_Pin << i, (ledNum[num] >> i) & 1);
-	  }
-  }
   #define redTime 5
   #define greenTime 3
   #define yellowTime 2
   int counter1 = greenTime;
   int counter2 = redTime;
   int state = 0;
+  // INITIAL STATE: LED 1 GREEN ON, LED 2 RED ON
   HAL_GPIO_WritePin(GPIOA, LED_RED1_Pin, SET);
   HAL_GPIO_WritePin(GPIOA, LED_YELLOW1_Pin, SET);
   HAL_GPIO_WritePin(GPIOA, LED_GREEN1_Pin, RESET);
   HAL_GPIO_WritePin(GPIOA, LED_RED2_Pin, RESET);
   HAL_GPIO_WritePin(GPIOA, LED_YELLOW2_Pin, SET);
   HAL_GPIO_WritePin(GPIOA, LED_GREEN2_Pin, SET);
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
   while (1)
   {
 	  if (counter1 <= 0 || counter2 <= 0) {
 		  switch (state) {
 		  case 0:
+			  // LED 1 GREEN OFF, YELLOW ON
+			  // LED 2 RED ON
 			  counter1 = yellowTime;
 			  counter2 = redTime - greenTime;
 			  state = 1;
@@ -125,6 +121,8 @@ int main(void)
 			  HAL_GPIO_WritePin(GPIOA, LED_GREEN2_Pin, SET);
 			  break;
 		  case 1:
+			  // LED 1 YELLOW OFF, RED ON
+			  // LED 2 RED OFF, GREEN ON
 			  counter1 = redTime;
 			  counter2 = greenTime;
 			  state = 2;
@@ -136,6 +134,8 @@ int main(void)
 			  HAL_GPIO_WritePin(GPIOA, LED_GREEN2_Pin, RESET);
 			  break;
 		  case 2:
+			  // LED 1 RED ON
+			  // LED 2 GREEN OFF, YELLOW ON
 			  counter1 = redTime - greenTime;
 			  counter2 = yellowTime;
 			  state = 3;
@@ -147,6 +147,8 @@ int main(void)
 			  HAL_GPIO_WritePin(GPIOA, LED_GREEN2_Pin, SET);
 			  break;
 		  case 3:
+			  // LED 1 RED OFF, GREEN ON
+			  // LED 2 YELLOW OFF, RED ON
 			  counter1 = greenTime;
 			  counter2 = redTime;
 			  state = 0;
@@ -254,7 +256,27 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void display7SEG(int num, uint32_t GPIO_Pin) {
+		/*
+		 * TRUTH TABLE
+		 *      dp g f e d c b a
+		 * 0 => 1 1 0 0 0 0 0 0 => 0xC0
+		 * 1 => 1 1 1 1 1 0 0 1 => 0xF9
+		 * 2 => 1 1 1 0 0 1 0 0 => 0xA4
+		 * 3 => 1 0 1 1 0 0 0 0 => 0xB0
+		 * 4 => 1 0 0 1 1 0 0 1 => 0x99
+		 * 5 => 1 0 0 1 0 0 1 0 => 0x92
+		 * 6 => 1 0 0 0 0 0 1 0 => 0x82
+		 * 7 => 1 1 1 1 1 0 0 0 => 0xF8
+		 * 8 => 1 0 0 0 0 0 0 0 => 0x80
+		 * 9 => 1 0 0 1 0 0 0 0 => 0x90
+		 */
+	  char ledNum[10] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90};
+	  for (int i = 0; i < 7; i++) {
+		  // Shift GPIO_PIN_0 left by i, right shift so the bit for segment i is in the LSB position
+		  HAL_GPIO_WritePin(GPIOB, GPIO_Pin << i, (ledNum[num] >> i) & 1);
+	  }
+ }
 /* USER CODE END 4 */
 
 /**
