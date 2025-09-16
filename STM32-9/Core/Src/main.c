@@ -42,14 +42,18 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+  uint16_t led[12] = {GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, GPIO_PIN_7, GPIO_PIN_8, GPIO_PIN_9, GPIO_PIN_10,
+  		  GPIO_PIN_11, GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14, GPIO_PIN_15};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-
+void test(int i);
+void clearAllClock();
+void setNumberOnClock(int num);
+void clearNumberOnClock(int num);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -86,18 +90,17 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  int i = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t led[12] = {GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, GPIO_PIN_7, GPIO_PIN_8, GPIO_PIN_9, GPIO_PIN_10,
-  		  GPIO_PIN_11, GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14, GPIO_PIN_15};
-  void clearNumberOnClock(int num) {
-	  HAL_GPIO_WritePin(GPIOA, led[num], SET);
-  }
   while (1)
   {
+	  if (i >= 12) i = 0;
+	  test(i);
+	  i++;
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -171,7 +174,23 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void test(int i) {
+	  // TURN OFF ALL LED, THEN TURN ON EVERY LED AND ANOTHER LED THAT IS 2 POSITIONS AWAY ON PINS 4-15
+	  clearAllClock();
+	  setNumberOnClock(i);
+	  setNumberOnClock((i + 2) % 12);
+}
+void clearAllClock() {
+	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 |
+			  GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 |
+			  GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15, SET);
+}
+void setNumberOnClock(int num) {
+	  HAL_GPIO_WritePin(GPIOA, led[num], RESET);
+}
+void clearNumberOnClock(int num) {
+	  HAL_GPIO_WritePin(GPIOA, led[num], SET);
+}
 /* USER CODE END 4 */
 
 /**
