@@ -86,35 +86,35 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  int counter = 5;
+  int state = 0;
+  // INITIAL STATE: LED RED ON
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, SET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int counter = 5;
-  int state = 0;
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, RESET);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, SET);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, SET);
   while (1)
   {
 	  if (counter <= 0) {
 		  switch (state) {
-		  case 0:
+		  case 0: // LED RED OFF, LED YELLOW ON
 			  counter = 2;
 			  state = 1;
 			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, SET);
 			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, RESET);
 			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, SET);
 			  break;
-		  case 1:
+		  case 1: // LED YELLOW OFF, LED GREEN ON
 			  counter = 3;
 			  state = 2;
 			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, SET);
 			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, SET);
 			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, RESET);
 			  break;
-		  case 2:
+		  case 2: // LED GREEN OFF, LED RED ON
 			  counter = 5;
 			  state = 0;
 			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, RESET);
