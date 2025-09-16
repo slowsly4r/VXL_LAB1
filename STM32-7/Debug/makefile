@@ -64,8 +64,8 @@ all: main-build
 main-build: Ex7.elf secondary-outputs
 
 # Tool invocations
-Ex7.elf: $(OBJS) $(USER_OBJS) C:\Users\GIGA\Downloads\STM32\Ex7\STM32F103C6UX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Ex7.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\GIGA\Downloads\STM32\Ex7\STM32F103C6UX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Ex7.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Ex7.elf: $(OBJS) $(USER_OBJS) C:\Users\GIGA\Downloads\GitHub\LAB1\Exercise7\STM32-7\STM32F103C6UX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Ex7.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\GIGA\Downloads\GitHub\LAB1\Exercise7\STM32-7\STM32F103C6UX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Ex7.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
