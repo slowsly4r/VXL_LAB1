@@ -49,7 +49,7 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-
+void display7SEG(int num);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -86,18 +86,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  int counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  void display7SEG(int num) {
-	  char ledNum[10] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90};
-	  for (int i = 0; i < 7; i++) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0 << i, (ledNum[num] >> i) & 1);
-	  }
-  }
-  int counter = 0;
   while (1)
   {
 	  if (counter >= 10) counter = 0;
@@ -160,19 +153,16 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4
-                          |GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8
-                          |GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12, GPIO_PIN_RESET);
+                          |GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PA1 PA2 PA3 PA4
-                           PA5 PA6 PA7 PA8
-                           PA9 PA10 PA11 PA12 */
+                           PA5 PA6 */
   GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4
-                          |GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8
-                          |GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+                          |GPIO_PIN_5|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -190,7 +180,27 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void display7SEG(int num) {
+		/*
+		 * TRUTH TABLE
+		 *      dp g f e d c b a
+		 * 0 => 1 1 0 0 0 0 0 0 => 0xC0
+		 * 1 => 1 1 1 1 1 0 0 1 => 0xF9
+		 * 2 => 1 1 1 0 0 1 0 0 => 0xA4
+		 * 3 => 1 0 1 1 0 0 0 0 => 0xB0
+		 * 4 => 1 0 0 1 1 0 0 1 => 0x99
+		 * 5 => 1 0 0 1 0 0 1 0 => 0x92
+		 * 6 => 1 0 0 0 0 0 1 0 => 0x82
+		 * 7 => 1 1 1 1 1 0 0 0 => 0xF8
+		 * 8 => 1 0 0 0 0 0 0 0 => 0x80
+		 * 9 => 1 0 0 1 0 0 0 0 => 0x90
+		 */
+	  char ledNum[10] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90};
+	  for (int i = 0; i < 7; i++) {
+		  // Shift GPIO_PIN_0 left by i, right shift so the bit for segment i is in the LSB position
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0 << i, (ledNum[num] >> i) & 1);
+	  }
+ }
 /* USER CODE END 4 */
 
 /**
